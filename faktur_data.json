@@ -1,0 +1,74 @@
+[
+  {
+    "nomorFaktur": "04002600231885419",
+    "namaPenjual": "SLS LAHARINDO",
+    "npwpPenjual": "0018701581056000",
+    "bulan": "Juni",
+    "tahun": "2026",
+    "jumlahPpn": "79200"
+  },
+  {
+    "nomorFaktur": "0400002672089697",
+    "namaPenjual": "PT INDOFOOD SUKSES MAKMUR TBK",
+    "npwpPenjual": "015426588092000",
+    "bulan": "Juni",
+    "tahun": "2026",
+    "jumlahPpn": "60302"
+  },
+  {
+    "nomorFaktur": "04002600002515843",
+    "namaPenjual": "CLANDYS SUKSES ABA",
+    "npwpPenjual": "0033254350541000",
+    "bulan": "Januari",
+    "tahun": "2026",
+    "jumlahPpn": "299530"
+  },
+  {
+    "nomorFaktur": "04002600235191470",
+    "namaPenjual": "GURITA MANDALA PER",
+    "npwpPenjual": "0859537029422000",
+    "bulan": "Juni",
+    "tahun": "2026",
+    "jumlahPpn": "181500"
+  },
+  {
+    "nomorFaktur": "04002500417168417",
+    "namaPenjual": "CHANDRA PERDANA AB",
+    "npwpPenjual": "0030663157322000",
+    "bulan": "Desember",
+    "tahun": "2025",
+    "jumlahPpn": "346500"
+  },
+  {
+    "nomorFaktur": "04002500417168406",
+    "namaPenjual": "CHANDRA PERDANA AB",
+    "npwpPenjual": "0030663157322000",
+    "bulan": "Desember",
+    "tahun": "2025",
+    "jumlahPpn": "220000"
+  },
+  {
+    "nomorFaktur": "04002500430437370",
+    "namaPenjual": "KARUNIA DAMAI SELALU",
+    "npwpPenjual": "0931982151656000",
+    "bulan": "Desember",
+    "tahun": "2025",
+    "jumlahPpn": "33000"
+  },
+  {
+    "nomorFaktur": "04012500390918587",
+    "namaPenjual": "ISHIDA INDONESIA",
+    "npwpPenjual": "0313129843043000",
+    "bulan": "November",
+    "tahun": "2025",
+    "jumlahPpn": "1858428"
+  },
+  {
+    "nomorFaktur": "0400042564741997",
+    "namaPenjual": "PT SUMBER ALFARIA TRIJAYA TBK",
+    "npwpPenjual": "013362389054000",
+    "bulan": "April",
+    "tahun": "2025",
+    "jumlahPpn": "3420945"
+  }
+]
