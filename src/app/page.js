@@ -5,7 +5,7 @@ import QRScanner from "@/components/QRScanner";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
 import Head from "next/head";
-import { History, ScanLine, FileDown, Settings, LogOut } from "lucide-react";
+import { History, ScanLine, FileDown, Settings, LogOut, Edit, Trash2, Plus, CheckSquare } from "lucide-react";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -15,6 +15,20 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState("scan");
   const [successPopup, setSuccessPopup] = useState(false);
   const [duplicatePopup, setDuplicatePopup] = useState(false);
+
+  // States untuk CRUD
+  const [selectedIndices, setSelectedIndices] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState("add"); // "add" | "edit"
+  const [modalIndex, setModalIndex] = useState(-1);
+  const [formData, setFormData] = useState({
+    nomorFaktur: "",
+    namaPenjual: "",
+    npwpPenjual: "",
+    bulan: "",
+    tahun: "",
+    jumlahPpn: "0"
+  });
 
   useEffect(() => {
     setMounted(true);
@@ -103,11 +117,101 @@ export default function Home() {
         body: JSON.stringify({ index }),
       });
       if (res.ok) {
-        const result = await res.json();
-        setFakturList(result.data);
+        await fetchFakturData();
+        setSelectedIndices(prev => prev.filter(i => i !== index).map(i => i > index ? i - 1 : i));
       }
     } catch (err) {
       console.error("Gagal menghapus:", err);
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedIndices.length === 0) return;
+    if (!window.confirm(`Yakin ingin menghapus ${selectedIndices.length} faktur terpilih?`)) return;
+    try {
+      const res = await fetch("/api/faktur", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ indices: selectedIndices }),
+      });
+      if (res.ok) {
+        await fetchFakturData();
+        setSelectedIndices([]);
+      }
+    } catch (err) {
+      console.error("Gagal menghapus terpilih:", err);
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    if (fakturList.length === 0) return;
+    if (!window.confirm("PERINGATAN: Yakin ingin menghapus SEMUA data faktur?")) return;
+    try {
+      const res = await fetch("/api/faktur", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deleteAll: true }),
+      });
+      if (res.ok) {
+        await fetchFakturData();
+        setSelectedIndices([]);
+      }
+    } catch (err) {
+      console.error("Gagal menghapus semua:", err);
+    }
+  };
+
+  const handleSelect = (index, checked) => {
+    if (checked) {
+      setSelectedIndices(prev => [...prev, index]);
+    } else {
+      setSelectedIndices(prev => prev.filter(i => i !== index));
+    }
+  };
+
+  const handleSelectAll = (checked) => {
+    if (checked) {
+      setSelectedIndices(fakturList.map((_, i) => i));
+    } else {
+      setSelectedIndices([]);
+    }
+  };
+
+  const openModal = (mode, index = -1) => {
+    setModalMode(mode);
+    setModalIndex(index);
+    if (mode === "edit" && index >= 0) {
+      setFormData({ ...fakturList[index] });
+    } else {
+      setFormData({ nomorFaktur: "", namaPenjual: "", npwpPenjual: "", bulan: "", tahun: "", jumlahPpn: "0" });
+    }
+    setModalOpen(true);
+  };
+
+  const handleSaveModal = async (e) => {
+    e.preventDefault();
+    try {
+      if (modalMode === "add") {
+        const res = await fetch("/api/faktur", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isManual: true, data: formData }),
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || "Gagal menambah data");
+      } else {
+        const res = await fetch("/api/faktur", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ index: modalIndex, data: formData }),
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || "Gagal mengubah data");
+      }
+      setModalOpen(false);
+      await fetchFakturData();
+    } catch (err) {
+      alert(err.message);
     }
   };
 
@@ -232,10 +336,23 @@ export default function Home() {
           <section className="card table-section">
             <div className="table-header">
               <h2 className="section-title">Riwayat ({fakturList.length})</h2>
-              <div className="desktop-action-buttons action-buttons">
-                <button onClick={handleExportCSV} className="btn-secondary" disabled={fakturList.length === 0} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem' }}>
-                  <FileDown size={18} /> CSV
+              <div className="desktop-action-buttons action-buttons" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <button onClick={() => openModal("add")} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: '#3b82f6' }}>
+                  <Plus size={18} /> Tambah
                 </button>
+                {selectedIndices.length > 0 && (
+                  <button onClick={handleDeleteSelected} className="btn-delete" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem' }}>
+                    <Trash2 size={18} /> Hapus Terpilih ({selectedIndices.length})
+                  </button>
+                )}
+                {fakturList.length > 0 && selectedIndices.length === 0 && (
+                  <button onClick={handleDeleteAll} className="btn-delete" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem' }}>
+                    <Trash2 size={18} /> Hapus Semua
+                  </button>
+                )}
+                {/* <button onClick={handleExportCSV} className="btn-secondary" disabled={fakturList.length === 0} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem' }}>
+                  <FileDown size={18} /> CSV
+                </button> */}
                 <button onClick={handleExportExcel} className="btn-primary" disabled={fakturList.length === 0} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem' }}>
                   <FileDown size={18} /> Excel
                 </button>
@@ -248,6 +365,14 @@ export default function Home() {
               <table className="data-table">
                 <thead>
                   <tr>
+                    <th style={{ width: '1%', whiteSpace: 'nowrap', textAlign: 'center', paddingLeft: '0.5rem', paddingRight: '0.5rem' }}>
+                      <input
+                        type="checkbox"
+                        className="custom-checkbox"
+                        onChange={(e) => handleSelectAll(e.target.checked)}
+                        checked={fakturList.length > 0 && selectedIndices.length === fakturList.length}
+                      />
+                    </th>
                     <th>No. Seri Faktur</th>
                     <th>Supplier</th>
                     <th>Bulan</th>
@@ -259,11 +384,19 @@ export default function Home() {
                 <tbody>
                   {fakturList.length === 0 ? (
                     <tr>
-                      <td colSpan="6" className="empty-state">Belum ada data.</td>
+                      <td colSpan="7" className="empty-state">Belum ada data.</td>
                     </tr>
                   ) : (
                     fakturList.map((faktur, index) => (
-                      <tr key={index}>
+                      <tr key={index} style={selectedIndices.includes(index) ? { backgroundColor: 'rgba(239, 68, 68, 0.05)' } : {}}>
+                        <td style={{ width: '1%', whiteSpace: 'nowrap', textAlign: 'center', paddingLeft: '0.5rem', paddingRight: '0.5rem' }}>
+                          <input
+                            type="checkbox"
+                            className="custom-checkbox"
+                            checked={selectedIndices.includes(index)}
+                            onChange={(e) => handleSelect(index, e.target.checked)}
+                          />
+                        </td>
                         <td className="font-medium text-primary">{faktur.nomorFaktur}</td>
                         <td>{faktur.namaPenjual}</td>
                         <td>{faktur.bulan}</td>
@@ -272,7 +405,14 @@ export default function Home() {
                           Rp {parseInt(faktur.jumlahPpn).toLocaleString("id-ID")}
                         </td>
                         <td>
-                          <button onClick={() => handleDelete(index)} className="btn-delete">Hapus</button>
+                          <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <button onClick={() => openModal("edit", index)} className="btn-secondary" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                              <Edit size={14} />
+                            </button>
+                            <button onClick={() => handleDelete(index)} className="btn-delete" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -307,6 +447,60 @@ export default function Home() {
             </div>
           </section>
         </div>
+
+        {/* MODAL CRUD */}
+        {modalOpen && (
+          <div style={{
+            position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)", zIndex: 10000,
+            display: "flex", justifyContent: "center", alignItems: "center",
+            padding: "1rem"
+          }}>
+            <div style={{
+              background: "white", borderRadius: "16px", padding: "2rem",
+              width: "100%", maxWidth: "500px", maxHeight: "90vh", overflowY: "auto",
+              boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+              color: "#1F2937"
+            }}>
+              <h2 style={{ marginBottom: "1.5rem", fontSize: "1.25rem", fontWeight: "700" }}>
+                {modalMode === "add" ? "Tambah Data Manual" : "Edit Data Faktur"}
+              </h2>
+              <form onSubmit={handleSaveModal} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <div>
+                  <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", fontWeight: "600" }}>No. Seri Faktur</label>
+                  <input required type="text" value={formData.nomorFaktur} onChange={e => setFormData({ ...formData, nomorFaktur: e.target.value })} style={{ width: "100%", padding: "0.75rem", borderRadius: "8px", border: "1px solid #D1D5DB" }} />
+                </div>
+                <div>
+                  <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", fontWeight: "600" }}>Nama Penjual (Supplier)</label>
+                  <input required type="text" value={formData.namaPenjual} onChange={e => setFormData({ ...formData, namaPenjual: e.target.value })} style={{ width: "100%", padding: "0.75rem", borderRadius: "8px", border: "1px solid #D1D5DB" }} />
+                </div>
+                <div>
+                  <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", fontWeight: "600" }}>NPWP Penjual</label>
+                  <input required type="text" value={formData.npwpPenjual} onChange={e => setFormData({ ...formData, npwpPenjual: e.target.value })} style={{ width: "100%", padding: "0.75rem", borderRadius: "8px", border: "1px solid #D1D5DB" }} />
+                </div>
+                <div style={{ display: "flex", gap: "1rem" }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", fontWeight: "600" }}>Bulan</label>
+                    <input required type="text" placeholder="Misal: Januari" value={formData.bulan} onChange={e => setFormData({ ...formData, bulan: e.target.value })} style={{ width: "100%", padding: "0.75rem", borderRadius: "8px", border: "1px solid #D1D5DB" }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", fontWeight: "600" }}>Tahun</label>
+                    <input required type="text" placeholder="Misal: 2024" value={formData.tahun} onChange={e => setFormData({ ...formData, tahun: e.target.value })} style={{ width: "100%", padding: "0.75rem", borderRadius: "8px", border: "1px solid #D1D5DB" }} />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", fontWeight: "600" }}>Jumlah PPN (Tanpa Titik)</label>
+                  <input required type="number" value={formData.jumlahPpn} onChange={e => setFormData({ ...formData, jumlahPpn: e.target.value })} style={{ width: "100%", padding: "0.75rem", borderRadius: "8px", border: "1px solid #D1D5DB" }} />
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem", marginTop: "1rem" }}>
+                  <button type="button" onClick={() => setModalOpen(false)} className="btn-secondary" style={{ padding: "0.75rem 1.5rem" }}>Batal</button>
+                  <button type="submit" className="btn-primary" style={{ padding: "0.75rem 1.5rem" }}>Simpan</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* BOTTOM NAVIGATION */}

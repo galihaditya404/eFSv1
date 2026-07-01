@@ -18,8 +18,7 @@ const nextConfig = {
     '10.130.30.68',
     '10.126.30.191',
   ],
-  turbopack: {},
-  output: 'standalone'
+  turbopack: {}
 };
 
 export default withPWA(nextConfig);

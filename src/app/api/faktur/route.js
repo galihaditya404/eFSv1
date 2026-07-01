@@ -27,13 +27,46 @@ export async function GET() {
 
 export async function DELETE(request) {
   try {
-    const { index } = await request.json();
-    const db = getDb();
-    if (index >= 0 && index < db.length) {
-      db.splice(index, 1); // Hapus item berdasarkan index
-      saveDb(db);
+    const body = await request.json();
+    let db = getDb();
+    
+    if (body.deleteAll) {
+      db = [];
+    } else if (Array.isArray(body.indices)) {
+      // Urutkan index menurun agar penghapusan tidak menggeser index berikutnya
+      const sortedIndices = [...body.indices].sort((a, b) => b - a);
+      sortedIndices.forEach(idx => {
+        if (idx >= 0 && idx < db.length) {
+          db.splice(idx, 1);
+        }
+      });
+    } else if (body.index !== undefined && body.index >= 0 && body.index < db.length) {
+      db.splice(body.index, 1);
     }
+    
+    saveDb(db);
     return NextResponse.json({ success: true, data: db }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PUT(request) {
+  try {
+    const { index, data } = await request.json();
+    const db = getDb();
+    
+    if (index >= 0 && index < db.length) {
+      const isDuplicate = db.some((item, idx) => idx !== index && item.nomorFaktur === data.nomorFaktur && item.nomorFaktur !== "-");
+      if (isDuplicate) {
+        return NextResponse.json({ error: "Nomor Faktur sudah digunakan oleh data lain." }, { status: 409 });
+      }
+      db[index] = data;
+      saveDb(db);
+      return NextResponse.json({ success: true, data: db }, { status: 200 });
+    } else {
+      return NextResponse.json({ error: "Data tidak ditemukan." }, { status: 404 });
+    }
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -41,7 +74,25 @@ export async function DELETE(request) {
 
 export async function POST(request) {
   try {
-    const { url } = await request.json();
+    const body = await request.json();
+
+    // -- MODE MANUAL INPUT --
+    if (body.isManual && body.data) {
+      const db = getDb();
+      const isDuplicate = db.some(item => item.nomorFaktur === body.data.nomorFaktur && item.nomorFaktur !== "-");
+      if (isDuplicate) {
+        return NextResponse.json({ 
+          error: "Faktur ini sudah pernah di-input sebelumnya.",
+          isDuplicate: true 
+        }, { status: 409 });
+      }
+      db.push(body.data);
+      saveDb(db);
+      return NextResponse.json(body.data, { status: 200 });
+    }
+
+    // -- MODE SCAN QR --
+    const { url } = body;
 
     if (!url) {
       return NextResponse.json({ error: "QR Code kosong." }, { status: 400 });

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>eFS - Onboarding</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0B0E14;
+            --surface-color: rgba(255, 255, 255, 0.05);
+            --surface-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #FFFFFF;
+            --text-secondary: #94A3B8;
+            --accent-primary: #00F0FF;
+            --accent-secondary: #7000FF;
+            --gradient-main: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Ambient Background Elements */
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            z-index: 0;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-secondary);
+            top: -100px;
+            left: -100px;
+        }
+
+        .orb-2 {
+            width: 250px;
+            height: 250px;
+            background: var(--accent-primary);
+            bottom: -50px;
+            right: -100px;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        /* Carousel Container */
+        .carousel-container {
+            flex: 1;
+            display: flex;
+            width: 300vw;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 1;
+        }
+
+        .carousel-slide {
+            width: 100vw;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            opacity: 0.4;
+            transform: scale(0.9);
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Graphics/Icons */
+        .slide-graphic {
+            width: 240px;
+            height: 240px;
+            margin-bottom: 3rem;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .glass-card {
+            background: var(--surface-color);
+            border: 1px solid var(--surface-border);
+            border-radius: 24px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative elements inside glass card */
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, transparent, transparent, var(--accent-primary));
+            animation: rotate 4s linear infinite;
+            opacity: 0.3;
+        }
+
+        .glass-card::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: var(--bg-color);
+            border-radius: 21px;
+            z-index: 0;
+        }
+
+        .icon-container {
+            z-index: 1;
+            font-size: 4rem;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.5));
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Typography */
+        .slide-content {
+            text-align: center;
+            max-width: 400px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        /* Bottom Controls */
+        .controls {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            z-index: 2;
+            background: linear-gradient(to top, var(--bg-color) 70%, transparent);
+        }
+
+        .indicators {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--surface-border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .dot.active {
+            width: 24px;
+            background: var(--accent-primary);
+            box-shadow: 0 0 10px var(--accent-primary);
+        }
+
+        .btn-main {
+            width: 100%;
+            max-width: 350px;
+            padding: 1rem;
+            border-radius: 16px;
+            border: none;
+            background: var(--gradient-main);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 10px 20px rgba(112, 0, 255, 0.3);
+        }
+
+        .btn-main:active {
+            transform: scale(0.98);
+        }
+
+        .btn-main::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-main:hover::after {
+            left: 100%;
+        }
+
+        .skip-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 400;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .skip-btn:hover {
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Orbs -->
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+
+    <!-- Carousel -->
+    <div class="carousel-container" id="carousel">
+        
+        <!-- Slide 1 -->
+        <div class="carousel-slide active">
+            <div class="slide-graphic">
+                <div class="glass-card">
+                    <div class="icon-container">📦</div>
+                </div>
+            </div>
+            <div class="slide-content">
+                <h1>Selamat Datang di eFS</h1>
+                <p>Elektronik Faktur Scanner masa depan. Kelola dan digitalisasi faktur Anda dalam satu genggaman dengan pengalaman premium.</p>
+            </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="carousel-slide">
+            <div class="slide-graphic">
+                <div class="glass-card">
+                    <div class="icon-container">⚡</div>
+                </div>
+            </div>
+            <div class="slide-content">
+                <h1>Scanning Super Cepat</h1>
+                <p>Didukung oleh teknologi pemrosesan tinggi untuk menangkap barcode dan data faktur secara akurat dan instan tanpa jeda.</p>
+            </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="carousel-slide">
+            <div class="slide-graphic">
+                <div class="glass-card">
+                    <div class="icon-container">🔒</div>
+                </div>
+            </div>
+            <div class="slide-content">
+                <h1>Keamanan Terjamin</h1>
+                <p>Data faktur Anda dienkripsi dan disimpan dengan aman. Akses kapan saja, di mana saja tanpa khawatir.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div class="indicators">
+            <div class="dot active" onclick="goToSlide(0)"></div>
+            <div class="dot" onclick="goToSlide(1)"></div>
+            <div class="dot" onclick="goToSlide(2)"></div>
+        </div>
+        
+        <button class="btn-main" id="nextBtn" onclick="nextAction()">Lanjutkan</button>
+        <button class="skip-btn" onclick="finishOnboarding()">Lewati</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 3;
+        const carousel = document.getElementById('carousel');
+        const slides = document.querySelectorAll('.carousel-slide');
+        const dots = document.querySelectorAll('.dot');
+        const nextBtn = document.getElementById('nextBtn');
+
+        function updateCarousel() {
+            // Move container
+            carousel.style.transform = `translateX(-${currentSlide * 100}vw)`;
+            
+            // Update active states
+            slides.forEach((slide, index) => {
+                if(index === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            dots.forEach((dot, index) => {
+                if(index === currentSlide) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+
+            // Update button text
+            if(currentSlide === totalSlides - 1) {
+                nextBtn.innerText = "Mulai Sekarang";
+            } else {
+                nextBtn.innerText = "Lanjutkan";
+            }
+        }
+
+        function nextAction() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateCarousel();
+            } else {
+                finishOnboarding();
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateCarousel();
+        }
+
+        function finishOnboarding() {
+            // Add fade out animation before redirecting
+            document.body.style.transition = "opacity 0.5s ease";
+            document.body.style.opacity = "0";
+            
+            setTimeout(() => {
+                // Here you would redirect to the main app dashboard
+                // window.location.href = "/";
+                alert("Navigating to Dashboard...");
+                document.body.style.opacity = "1";
+            }, 500);
+        }
+
+        // Swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const threshold = 50;
+            if (touchStartX - touchEndX > threshold) {
+                // Swipe Left (Next)
+                if (currentSlide < totalSlides - 1) {
+                    currentSlide++;
+                    updateCarousel();
+                }
+            }
+            if (touchEndX - touchStartX > threshold) {
+                // Swipe Right (Prev)
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    updateCarousel();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
