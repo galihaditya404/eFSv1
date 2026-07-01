@@ -9,6 +9,7 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  basePath: '/efs',
   output: 'standalone',
   allowedDevOrigins: [
     'loca.lt',
