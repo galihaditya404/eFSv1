@@ -8,11 +8,9 @@ services:
     container_name: efs-app
     restart: always
     ports:
-      # Format: "Port_di_Ubuntu:Port_di_Docker"
-      # Ubah angka 3000 pertama (sebelah kiri) jika port 3000 sudah dipakai aplikasi lain
       - "3000:3000"
     volumes:
-      # Menyimpan data faktur secara permanen di luar container
+      # save data faktur di luar container
       - ./faktur_data.json:/app/faktur_data.json
     environment:
       - NODE_ENV=production
