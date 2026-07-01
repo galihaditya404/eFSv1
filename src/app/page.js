@@ -37,7 +37,7 @@ export default function Home() {
   // Fungsi untuk memuat data dari server
   const fetchFakturData = async () => {
     try {
-      const res = await fetch("/api/faktur");
+      const res = await fetch("/efs/api/faktur");
       if (res.ok) {
         const data = await res.json();
         setFakturList(data);
@@ -61,7 +61,7 @@ export default function Home() {
     setErrorMsg("");
 
     try {
-      const res = await fetch("/api/faktur", {
+      const res = await fetch("/efs/api/faktur", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: decodedText }),
@@ -111,7 +111,7 @@ export default function Home() {
   const handleDelete = async (index) => {
     if (!window.confirm("Yakin ingin menghapus faktur ini?")) return;
     try {
-      const res = await fetch("/api/faktur", {
+      const res = await fetch("/efs/api/faktur", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ index }),
@@ -129,7 +129,7 @@ export default function Home() {
     if (selectedIndices.length === 0) return;
     if (!window.confirm(`Yakin ingin menghapus ${selectedIndices.length} faktur terpilih?`)) return;
     try {
-      const res = await fetch("/api/faktur", {
+      const res = await fetch("/efs/api/faktur", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ indices: selectedIndices }),
@@ -147,7 +147,7 @@ export default function Home() {
     if (fakturList.length === 0) return;
     if (!window.confirm("PERINGATAN: Yakin ingin menghapus SEMUA data faktur?")) return;
     try {
-      const res = await fetch("/api/faktur", {
+      const res = await fetch("/efs/api/faktur", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ deleteAll: true }),
@@ -192,7 +192,7 @@ export default function Home() {
     e.preventDefault();
     try {
       if (modalMode === "add") {
-        const res = await fetch("/api/faktur", {
+        const res = await fetch("/efs/api/faktur", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ isManual: true, data: formData }),
@@ -200,7 +200,7 @@ export default function Home() {
         const result = await res.json();
         if (!res.ok) throw new Error(result.error || "Gagal menambah data");
       } else {
-        const res = await fetch("/api/faktur", {
+        const res = await fetch("/efs/api/faktur", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ index: modalIndex, data: formData }),
@@ -218,8 +218,8 @@ export default function Home() {
   const handleLogout = async () => {
     if (!window.confirm("Yakin ingin keluar?")) return;
     try {
-      await fetch("/api/auth", { method: "DELETE" });
-      window.location.href = "/login";
+      await fetch("/efs/api/auth", { method: "DELETE" });
+      window.location.href = "/efs/login";
     } catch (err) {
       console.error("Gagal logout:", err);
     }
@@ -310,7 +310,7 @@ export default function Home() {
       <header className="header" style={{ marginBottom: "2rem" }}>
         <div className="logo-section">
           <div className="logo-icon">
-            <img src="/icon.svg" alt="Logo" style={{ width: '60%', height: '60%', objectFit: 'contain' }} />
+            <img src="/efs/icon.svg" alt="Logo" style={{ width: '60%', height: '60%', objectFit: 'contain' }} />
           </div>
           <h1 className="title">e-Faktur</h1>
         </div>

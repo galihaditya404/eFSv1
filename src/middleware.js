@@ -19,7 +19,8 @@ export function middleware(request) {
 
   // Jika tidak punya tiket login, tendang ke /login
   if (!isAuthenticated) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    request.nextUrl.pathname = '/login';
+    return NextResponse.redirect(request.nextUrl);
   }
 
   // Jika sudah login, silakan lewat

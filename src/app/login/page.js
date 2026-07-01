@@ -18,7 +18,7 @@ export default function LoginPage() {
     setErrorMsg("");
 
     try {
-      const res = await fetch("/api/auth", {
+      const res = await fetch("/efs/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
@@ -49,7 +49,7 @@ export default function LoginPage() {
       {/* Kiri: Background Image (Hidden di layar kecil) */}
       <div className="login-bg" style={{
         flex: 1,
-        backgroundImage: "url('/bg-login.png')",
+        backgroundImage: "url('/efs/bg-login.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         position: "relative"
@@ -97,7 +97,7 @@ export default function LoginPage() {
             marginBottom: "2rem",
             boxShadow: "0 8px 20px -4px rgba(0, 0, 0, 0.1)"
           }}>
-            <img src="/icon.svg" alt="Logo" style={{ width: '70%', height: '70%', objectFit: 'contain' }} />
+            <img src="/efs/icon.svg" alt="Logo" style={{ width: '70%', height: '70%', objectFit: 'contain' }} />
           </div>
 
           <h1 style={{
