@@ -29,5 +29,8 @@ export function middleware(request) {
 
 export const config = {
   // Hanya jalankan middleware ini pada path tertentu (hindari eksekusi berlebih)
-  matcher: ['/((?!api/auth|_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    '/',
+    '/((?!api/auth|_next/static|_next/image|favicon.ico).*)',
+  ],
 };
