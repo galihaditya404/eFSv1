@@ -591,6 +591,19 @@ body {
   .bottom-nav {
     display: flex;
   }
+
+  /* Make center camera button smaller on mobile */
+  .center-btn {
+    width: 48px;
+    height: 48px;
+    top: -20px;
+    box-shadow: 0 0 0 4px var(--bg-app), 0 6px 16px rgba(16, 185, 129, 0.3);
+  }
+
+  .center-btn svg {
+    width: 26px;
+    height: 26px;
+  }
 }
 
 /* Splash Screen */
