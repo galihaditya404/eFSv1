@@ -7,10 +7,22 @@ services:
       dockerfile: Dockerfile
     container_name: efs-app
     restart: always
-    ports:
-      - "3000:3000"
     volumes:
       # save data faktur di luar container
       - ./faktur_data.json:/app/faktur_data.json
     environment:
       - NODE_ENV=production
+
+  nginx:
+    image: nginx:alpine
+    container_name: efs-nginx
+    restart: always
+    ports:
+      - "80:80"     # HTTP
+      - "443:443"   # HTTPS
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      # Kita langsung sambungkan folder sertifikat dari Host Debian ke dalam Docker
+      - /etc/nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - efs-app
