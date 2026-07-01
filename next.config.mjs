@@ -9,6 +9,7 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   allowedDevOrigins: [
     'loca.lt',
     '192.168.1.26',
