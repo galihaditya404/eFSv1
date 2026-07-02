@@ -8,7 +8,7 @@ export default function QRScanner({ onScanSuccess, isActive = true }) {
   const [isHoneywellMode, setIsHoneywellMode] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [isDesktop, setIsDesktop] = useState(true);
-  
+
   // Zoom State
   const [zoomRange, setZoomRange] = useState(null);
   const [zoomValue, setZoomValue] = useState(1);
@@ -59,7 +59,7 @@ export default function QRScanner({ onScanSuccess, isActive = true }) {
             }
           },
           {
-            onDecodeError: (error) => {},
+            onDecodeError: (error) => { },
             highlightScanRegion: true,
             highlightCodeOutline: true,
             maxScansPerSecond: 10,
@@ -174,7 +174,7 @@ export default function QRScanner({ onScanSuccess, isActive = true }) {
     if (videoElement && videoElement.srcObject) {
       const track = videoElement.srcObject.getVideoTracks()[0];
       if (track) {
-        track.applyConstraints({ advanced: [{ zoom: val }] }).catch(() => {});
+        track.applyConstraints({ advanced: [{ zoom: val }] }).catch(() => { });
       }
     }
   };
@@ -255,23 +255,23 @@ export default function QRScanner({ onScanSuccess, isActive = true }) {
       `}</style>
 
       <div style={{ display: 'flex', gap: '1rem', width: '100%', maxWidth: isDesktop ? '600px' : '450px', justifyContent: 'center', flexWrap: 'wrap' }}>
-        
+
         {/* KAMERA BUTTON (Mobile Only) */}
         {!isDesktop && (
-          <button onClick={() => { if(isScanning) stopCamera(); else startCamera(); }} style={{ 
-            flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', 
-            padding: '1.5rem 1rem', gap: '0.75rem', borderRadius: '24px', transition: 'all 0.2s ease-in-out', cursor: 'pointer',
+          <button onClick={() => { if (isScanning) stopCamera(); else startCamera(); }} style={{
+            flex: 'none', minWidth: '120px', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+            padding: '0.75rem 1rem', gap: '0.5rem', borderRadius: '16px', transition: 'all 0.2s ease-in-out', cursor: 'pointer',
             backgroundColor: isScanning ? '#ECFDF5' : '#ffffff',
             border: isScanning ? '2px solid #10B981' : '1px solid #E2E8F0',
             color: isScanning ? '#047857' : '#0F172A',
             boxShadow: isScanning ? '0 10px 15px -3px rgba(16, 185, 129, 0.15)' : '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
           }}>
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
               <circle cx="12" cy="13" r="3"></circle>
             </svg>
-            <span style={{ fontSize: '1rem', fontWeight: '700' }}>Kamera</span>
-            {isScanning && <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#10B981', background: '#D1FAE5', padding: '2px 8px', borderRadius: '12px' }}>ON</span>}
+            <span style={{ fontSize: '0.9rem', fontWeight: '600' }}>Kamera</span>
+            {isScanning && <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#10B981', background: '#D1FAE5', padding: '2px 6px', borderRadius: '10px' }}>ON</span>}
           </button>
         )}
 
@@ -280,30 +280,30 @@ export default function QRScanner({ onScanSuccess, isActive = true }) {
           onClick={() => fileInputRef.current.click()}
           className={`hover-btn-scale ${!isDesktop ? 'desktop-action-buttons' : ''}`}
           style={{
-            flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column', alignItems: 'center',
-            justifyContent: 'center', padding: '1.5rem 1rem', gap: '0.75rem', borderRadius: '24px',
+            flex: isDesktop ? 1 : 'none', minWidth: isDesktop ? '150px' : '120px', display: 'flex', flexDirection: isDesktop ? 'column' : 'row', alignItems: 'center',
+            justifyContent: 'center', padding: isDesktop ? '1.5rem 1rem' : '0.75rem 1rem', gap: isDesktop ? '0.75rem' : '0.5rem', borderRadius: isDesktop ? '24px' : '16px',
             backgroundColor: '#ffffff', border: '2px solid #E2E8F0', color: '#0F172A',
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)', cursor: 'pointer'
           }}
         >
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width={isDesktop ? "48" : "24"} height={isDesktop ? "48" : "24"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
             <circle cx="8.5" cy="8.5" r="1.5"></circle>
             <polyline points="21 15 16 10 5 21"></polyline>
           </svg>
-          <span style={{ fontSize: '1rem', fontWeight: '700' }}>Upload</span>
+          <span style={{ fontSize: isDesktop ? '1rem' : '0.9rem', fontWeight: isDesktop ? '700' : '600' }}>Upload</span>
         </button>
 
         {/* SCANNER FISIK BUTTON (Desktop Only) */}
         {isDesktop && (
-          <button 
-            onClick={() => { if(isHoneywellMode) stopHoneywell(); else startHoneywell(); }} 
+          <button
+            onClick={() => { if (isHoneywellMode) stopHoneywell(); else startHoneywell(); }}
             className="hover-btn-scale"
             style={{
               flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column', alignItems: 'center',
               justifyContent: 'center', padding: '1.5rem 1rem', gap: '0.75rem', borderRadius: '24px', cursor: 'pointer',
-              backgroundColor: isHoneywellMode ? '#ECFDF5' : '#ffffff', 
-              border: isHoneywellMode ? '2px solid #10B981' : '2px solid #E2E8F0', 
+              backgroundColor: isHoneywellMode ? '#ECFDF5' : '#ffffff',
+              border: isHoneywellMode ? '2px solid #10B981' : '2px solid #E2E8F0',
               color: isHoneywellMode ? '#047857' : '#0F172A',
               boxShadow: isHoneywellMode ? '0 10px 15px -3px rgba(16, 185, 129, 0.15)' : '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
             }}
