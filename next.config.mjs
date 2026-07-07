@@ -2,7 +2,7 @@ import withPWAInit from "@ducanh2912/next-pwa";
 
 const withPWA = withPWAInit({
   dest: "public",
-  disable: false,
+  disable: process.env.NODE_ENV === "development",
   register: true,
   skipWaiting: true,
 });
@@ -14,7 +14,7 @@ const nextConfig = {
   allowedDevOrigins: [
     'loca.lt',
     '192.168.1.26',
-    '192.168.1.13',
+    '192.168.1.34',
     '10.130.30.68',
     '10.126.30.191',
   ],

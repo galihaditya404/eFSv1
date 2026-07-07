@@ -30,6 +30,15 @@ export default function Home() {
     jumlahPpn: "0"
   });
 
+  // States untuk Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  // Perhitungan Pagination
+  const totalPages = Math.max(1, Math.ceil(fakturList.length / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentData = fakturList.slice(startIndex, startIndex + itemsPerPage);
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -382,19 +391,21 @@ export default function Home() {
                   </tr>
                 </thead>
                 <tbody>
-                  {fakturList.length === 0 ? (
+                  {currentData.length === 0 ? (
                     <tr>
                       <td colSpan="7" className="empty-state">Belum ada data.</td>
                     </tr>
                   ) : (
-                    fakturList.map((faktur, index) => (
-                      <tr key={index} style={selectedIndices.includes(index) ? { backgroundColor: 'rgba(239, 68, 68, 0.05)' } : {}}>
+                    currentData.map((faktur, index) => {
+                      const actualIndex = startIndex + index;
+                      return (
+                      <tr key={actualIndex} style={selectedIndices.includes(actualIndex) ? { backgroundColor: 'rgba(239, 68, 68, 0.05)' } : {}}>
                         <td style={{ width: '1%', whiteSpace: 'nowrap', textAlign: 'center', paddingLeft: '0.5rem', paddingRight: '0.5rem' }}>
                           <input
                             type="checkbox"
                             className="custom-checkbox"
-                            checked={selectedIndices.includes(index)}
-                            onChange={(e) => handleSelect(index, e.target.checked)}
+                            checked={selectedIndices.includes(actualIndex)}
+                            onChange={(e) => handleSelect(actualIndex, e.target.checked)}
                           />
                         </td>
                         <td className="font-medium text-primary">{faktur.nomorFaktur}</td>
@@ -406,20 +417,63 @@ export default function Home() {
                         </td>
                         <td>
                           <div style={{ display: 'flex', gap: '0.5rem' }}>
-                            <button onClick={() => openModal("edit", index)} className="btn-secondary" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                            <button onClick={() => openModal("edit", actualIndex)} className="btn-secondary" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                               <Edit size={14} />
                             </button>
-                            <button onClick={() => handleDelete(index)} className="btn-delete" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                            <button onClick={() => handleDelete(actualIndex)} className="btn-delete" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                               <Trash2 size={14} />
                             </button>
                           </div>
                         </td>
                       </tr>
-                    ))
+                    )})
                   )}
                 </tbody>
               </table>
             </div>
+
+            {/* Pagination Controls */}
+            {fakturList.length > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginTop: '1rem', padding: '0 0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Tampilkan:</span>
+                  <select 
+                    value={itemsPerPage} 
+                    onChange={(e) => {
+                      setItemsPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    style={{ padding: '0.4rem', borderRadius: '8px', border: '1px solid var(--border-light)', outline: 'none', background: 'var(--surface)', color: 'var(--text-main)', cursor: 'pointer' }}
+                  >
+                    <option value={10}>10 baris</option>
+                    <option value={25}>25 baris</option>
+                    <option value={50}>50 baris</option>
+                    <option value={100}>100 baris</option>
+                  </select>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Halaman {currentPage} dari {totalPages}</span>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button 
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))} 
+                      disabled={currentPage === 1}
+                      className="btn-secondary"
+                      style={{ padding: '0.4rem 0.8rem', borderRadius: '8px' }}
+                    >
+                      Prev
+                    </button>
+                    <button 
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} 
+                      disabled={currentPage === totalPages}
+                      className="btn-secondary"
+                      style={{ padding: '0.4rem 0.8rem', borderRadius: '8px' }}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </section>
         </div>
 
