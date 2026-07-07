@@ -3,9 +3,10 @@ import "./globals.css";
 export const metadata = {
   title: "e-Faktur Scanner",
   description: "Scanner QR e-Faktur berbasis web",
-  manifest: "/manifest.json",
+  manifest: "/efs/manifest.json",
   icons: {
-    apple: "/apple-touch-icon.png",
+    icon: "/efs/icon.svg",
+    apple: "/efs/apple-touch-icon.png",
   },
 };
 

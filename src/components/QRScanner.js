@@ -131,7 +131,7 @@ export default function QRScanner({ onScanSuccess, isActive = true }) {
         // Only steal focus if they aren't typing in another legit input field
         const activeTag = document.activeElement?.tagName;
         if (activeTag !== "INPUT" && activeTag !== "TEXTAREA") {
-          hiddenInputRef.current.focus();
+          hiddenInputRef.current.focus({ preventScroll: true });
         }
       }
     };
@@ -215,7 +215,7 @@ export default function QRScanner({ onScanSuccess, isActive = true }) {
         <input
           ref={hiddenInputRef}
           type="text"
-          style={{ position: 'absolute', opacity: 0, top: '-9999px', left: '-9999px' }}
+          style={{ position: 'fixed', opacity: 0, top: '50%', left: '50%', zIndex: -100 }}
           autoFocus
           onKeyDown={(e) => {
             if (e.key === "Enter") {
