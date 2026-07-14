@@ -86,7 +86,7 @@ export async function POST(request) {
           isDuplicate: true 
         }, { status: 409 });
       }
-      db.push(body.data);
+      db.unshift(body.data);
       saveDb(db);
       return NextResponse.json(body.data, { status: 200 });
     }
@@ -204,7 +204,7 @@ export async function POST(request) {
       }, { status: 409 });
     }
     
-    db.push(result);
+    db.unshift(result);
     saveDb(db);
 
     return NextResponse.json(result, { status: 200 });
