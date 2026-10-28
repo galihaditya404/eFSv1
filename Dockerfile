@@ -1,4 +1,5 @@
-FROM node:20-bookworm-slim AS base
+FROM node:26.12.1-bookworm-slim AS base
+RUN npm install --global npm@12.2.1 && npm --version
 
 # Install dependencies only when needed
 FROM base AS deps
